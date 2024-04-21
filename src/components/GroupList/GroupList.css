@@ -1,0 +1,35 @@
+table {
+    border-collapse: collapse;
+    color: var(--black-purple);
+    text-align: center;
+}
+
+#group-table {
+    width: 300px !important;
+}
+
+table td, table th {
+    border: 1px solid var(--black-purple); /* Adds a border to each cell */
+    padding: 10px; /* Adds some padding inside each cell */
+    color: var(--black-purple);
+}
+
+table th {
+    background-color: var(--dark-purple); /* Changes the background color of the header */
+    color: white; /* Changes the text color of the header */
+}
+
+.remove-btn, .add-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    align-content: center;
+    align-items: center;
+    margin-left: 9px;
+}
+
+.remove-btn i, .add-btn i {
+    font-size: 2.5em; /* Adjust size as needed */
+}
+
+
