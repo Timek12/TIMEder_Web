@@ -1,0 +1,20 @@
+/* src/components/Footer/Footer.css */
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: var(--dark-purple);
+    color: var(--white);
+    text-align: center;
+}
+
+.footer i {
+    font-size: 24px;
+    margin: 0 10px;
+    color: var(--white);
+}
+
+.footer i:hover {
+    color: var(--light-purple);
+}
