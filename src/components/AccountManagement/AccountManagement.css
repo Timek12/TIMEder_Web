@@ -1,0 +1,14 @@
+table {
+    margin-top: 50px;
+    border-collapse: collapse;
+    color: var(--black-purple)
+}
+
+table td, table th {
+    border: 1px solid var(--black-purple); /* Adds a border to each cell */
+    padding: 10px; /* Adds some padding inside each cell */
+}
+
+.column-header {
+    cursor: pointer;
+}
