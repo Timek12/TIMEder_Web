@@ -1,13 +1,17 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+:root {
+    --light-purple: #A060A8;
+    --dark-purple: #6D2B75;
+    --black-purple: #2D0033;
+    --white-purple: #DFD3E3;
+    --white: #F0F0F0;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+@font-face {
+    font-family: 'Genty Sants';
+    src: url('../public/fonts/GentySans.ttf') format('truetype');
+}
+
+body {
+    font-family: 'Genty Sants', sans-serif;
+    background: linear-gradient(to bottom, #A060A8 0%, #F0F0F0 50%, #A060A8 100%) !important;
 }
