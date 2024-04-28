@@ -18,26 +18,30 @@ function AccountManagement() {
                 index: 245734,
                 firstName: 'Adam',
                 lastName: 'Kowalski',
+                status: '',
             },
             {
                 index: 225714,
                 firstName: 'Agnieszka',
                 lastName: 'Grzelak',
+                status: '',
             },
             {
                 index: 215332,
                 firstName: 'Marcin',
                 lastName: 'Dubiel',
+                status: '',
             },
             {
                 index: 245239,
                 firstName: 'Robert',
                 lastName: 'Lewandowski',
+                status: '',
             },
         ],
         []
     );
-
+    const [selectedStatus, setSelectedStatus] = useState(Array(data.length).fill(2)); // ok - 2
     const columns = React.useMemo(
         () => [
             {
@@ -73,8 +77,26 @@ function AccountManagement() {
                 ),
                 accessor: 'lastName',
             },
+            {
+                Header: 'Status',
+                accessor: 'status',
+                Cell: ({ row }) => (
+                    <div className='status-checkboxes'>
+                        {['archive', 'blockquote-right', 'check-circle', 'exclamation-triangle'].map((icon, index) => (
+                            <i
+                                className={`bi bi-${icon} ${selectedStatus[row.index] === index ? 'selected' : ''}`}
+                                onClick={() => {
+                                    const newSelectedStatus = [...selectedStatus];
+                                    newSelectedStatus[row.index] = index;
+                                    setSelectedStatus(newSelectedStatus);
+                                }}
+                            ></i>
+                        ))}
+                    </div>
+                ),
+            },
         ],
-        [sortDirection]
+        [sortDirection, selectedStatus]
     );
 
     const {

@@ -12,3 +12,12 @@ table td, table th {
 .column-header {
     cursor: pointer;
 }
+
+.status-checkboxes i {
+    margin: 0 5px;
+    font-size: 1.5em;
+}
+
+.status-checkboxes .selected {
+    color: red;
+}
