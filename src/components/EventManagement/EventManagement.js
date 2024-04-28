@@ -3,6 +3,7 @@ import { useTable } from 'react-table';
 import './EventManagement.css';
 import UserList from "../UserList/UserList";
 import GroupList from "../GroupList/GroupList";
+import Swal from "sweetalert2";
 
 function EventManagement() {
     const [sortDirection, setSortDirection] = useState({});
@@ -133,7 +134,25 @@ function EventManagement() {
                             <i className="bi bi-plus-circle"></i>
                         </button>
                     ) : (
-                        <button className='remove-btn'>
+                        <button className='remove-btn' onClick={() => {
+                            Swal.fire({
+                                title: "Are you sure?",
+                                text: "You won't be able to revert this!",
+                                icon: "warning",
+                                showCancelButton: true,
+                                confirmButtonColor: "#3085d6",
+                                cancelButtonColor: "#d33",
+                                confirmButtonText: "Yes, delete it!"
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    Swal.fire({
+                                        title: "Deleted!",
+                                        text: "Your file has been deleted.",
+                                        icon: "success"
+                                    });
+                                }
+                            });
+                        }}>
                             <i className="bi bi-x-circle"></i>
                         </button>
                     )

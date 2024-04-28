@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import { useTable } from 'react-table';
 import './ErrorManagement.css';
+import Swal from "sweetalert2";
 
 function ErrorManagement() {
     const [sortDirection, setSortDirection] = useState({});
@@ -91,7 +92,27 @@ function ErrorManagement() {
                 Header: 'Operation',
                 accessor: 'operation',
                 Cell: () => (
-                    <button className='remove-btn'>
+
+                    <button className='remove-btn' onClick={() => {
+                        Swal.fire({
+                            title: "Are you sure?",
+                            text: "You won't be able to revert this!",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#3085d6",
+                            cancelButtonColor: "#d33",
+                            confirmButtonText: "Yes, delete it!"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                Swal.fire({
+                                    title: "Deleted!",
+                                    text: "Your file has been deleted.",
+                                    icon: "success"
+                                });
+                                // Add your code to delete the row here
+                            }
+                        });
+                    }}>
                         <i className="bi bi-x-circle"></i>
                     </button>
                 ),
@@ -106,12 +127,12 @@ function ErrorManagement() {
         headerGroups,
         rows,
         prepareRow,
-    } = useTable({ columns, data });
+    } = useTable({columns, data});
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
             <h1 style={{marginTop: '30px'}}><i className='bi bi-bug'></i> Error Reports</h1>
-            <table {...getTableProps()} style={{ width: '50%' }}>
+            <table {...getTableProps()} style={{width: '50%'}}>
                 <thead>
                 {headerGroups.map(headerGroup => (
                     <tr {...headerGroup.getHeaderGroupProps()}>

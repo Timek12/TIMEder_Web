@@ -19,5 +19,5 @@ table td, table th {
 }
 
 .status-checkboxes .selected {
-    color: red;
+    color: var(--light-purple);
 }
