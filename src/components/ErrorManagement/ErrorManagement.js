@@ -38,6 +38,7 @@ function ErrorManagement() {
         []
     );
 
+    const [selectedStatus, setSelectedStatus] = useState(Array(data.length).fill(1)); // in progress - 1
 
     const columns = React.useMemo(
         () => [
@@ -68,8 +69,35 @@ function ErrorManagement() {
                 ),
                 accessor: 'description',
             },
+            {
+                Header: 'Status',
+                accessor: 'status',
+                Cell: ({ row }) => (
+                    <div className='status-icons'>
+                        {['check-circle', 'hourglass-split'].map((icon, index) => (
+                            <i
+                                className={`bi bi-${icon} ${selectedStatus[row.index] === index ? 'selected' : ''}`}
+                                onClick={() => {
+                                    const newSelectedStatus = [...selectedStatus];
+                                    newSelectedStatus[row.index] = index;
+                                    setSelectedStatus(newSelectedStatus);
+                                }}
+                            ></i>
+                        ))}
+                    </div>
+                ),
+            },
+            {
+                Header: 'Operation',
+                accessor: 'operation',
+                Cell: () => (
+                    <button className='remove-btn'>
+                        <i className="bi bi-x-circle"></i>
+                    </button>
+                ),
+            },
         ],
-        [sortDirection]
+        [sortDirection, selectedStatus]
     );
 
     const {

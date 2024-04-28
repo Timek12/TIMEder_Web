@@ -13,3 +13,12 @@ table th {
     background-color: var(--dark-purple); /* Changes the background color of the header */
     color: white; /* Changes the text color of the header */
 }
+
+.status-icons i {
+    margin: 0 5px;
+    font-size: 2em;
+}
+
+.status-icons .selected {
+    color: var(--light-purple);
+}
