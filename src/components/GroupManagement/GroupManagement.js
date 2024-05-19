@@ -163,8 +163,8 @@ function GroupManagement() {
                                 text: "You won't be able to revert this!",
                                 icon: "warning",
                                 showCancelButton: true,
-                                confirmButtonColor: "#3085d6",
-                                cancelButtonColor: "#d33",
+                                confirmButtonColor: "#6D2B75FF",
+                                cancelButtonColor: "#A060A8FF",
                                 confirmButtonText: "Yes, delete it!"
                             }).then((result) => {
                                 if (result.isConfirmed) {
