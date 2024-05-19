@@ -37,7 +37,26 @@ function EventManagement() {
                 groups: 'Add Groups',
                 operation: '...'
             },
-            // More data...
+            {
+                name: 'Dni Wydzialu EEIA',
+                location: 'aleje Politechniki 11, Lodz',
+                date: '22.04.2024',
+                startTime: '10:00',
+                description: 'Oficjalne dni wydzialu',
+                users: 'Add Users',
+                groups: 'Add Groups',
+                operation: '...'
+            },
+            {
+                name: 'Granie w szachy',
+                location: 'aleje Politechniki 11, Lodz',
+                date: '19.04.2024',
+                startTime: '12:00',
+                description: 'Oficjalny turniej szachowy',
+                users: 'Add Users',
+                groups: 'Add Groups',
+                operation: '...'
+            },
         ],
         []
     );
@@ -200,7 +219,7 @@ function EventManagement() {
             </table>
             {isModalUserOpen && (
                 <div className="modal">
-                    <div className="modal-content">
+                    <div className="modal-content" style={{borderRadius: '20px'}}>
                         <UserList/>
                         <button style={{width: '300px', alignItems: 'center'}} className="btn btn-purple" onClick={() => setIsUserModalOpen(false)}>Close</button>
                     </div>
@@ -208,7 +227,7 @@ function EventManagement() {
             )}
             {isModalGroupOpen && (
                 <div className="modal">
-                    <div className="modal-content" id='group-modal'>
+                    <div className="modal-content" id='group-modal' style={{borderRadius: '20px'}}>
                         <GroupList/>
                         <button style={{width: '300px', alignItems: 'center'}} className="btn btn-purple"
                                 onClick={() => setIsGroupModalOpen(false)}>Close

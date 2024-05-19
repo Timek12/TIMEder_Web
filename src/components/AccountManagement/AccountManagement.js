@@ -38,6 +38,18 @@ function AccountManagement() {
                 lastName: 'Lewandowski',
                 status: '',
             },
+            {
+                index: 234156,
+                firstName: 'Aleksandra',
+                lastName: 'Kowalska',
+                status: '',
+            },
+            {
+                index: 245239,
+                firstName: 'Jakub',
+                lastName: 'Kowalski',
+                status: '',
+            },
         ],
         []
     );
@@ -82,7 +94,7 @@ function AccountManagement() {
                 accessor: 'status',
                 Cell: ({ row }) => (
                     <div className='status-checkboxes'>
-                        {['archive', 'blockquote-right', 'check-circle', 'exclamation-triangle'].map((icon, index) => (
+                        {['archive', 'ban', 'check-circle', 'hourglass-split'].map((icon, index) => (
                             <i
                                 className={`bi bi-${icon} ${selectedStatus[row.index] === index ? 'selected' : ''}`}
                                 onClick={() => {

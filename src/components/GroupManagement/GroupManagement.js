@@ -28,11 +28,33 @@ function GroupManagement() {
             },
             {
                 name: 'Wejkusie 2.0',
-                purpose: 'Nice time spending',
+                purpose: 'Fun',
                 maxMembers: '100',
                 code: '567123',
                 status: 'Public',
-                description: 'Group for people who like to spend time together',
+                description: 'Fun group',
+                users: 'Add Users',
+                groups: 'Add Groups',
+                operation: '...'
+            },
+            {
+                name: 'Biale Kapelusze',
+                purpose: 'Relax',
+                maxMembers: '250',
+                code: '514223',
+                status: 'Public',
+                description: 'Relaxing group',
+                users: 'Add Users',
+                groups: 'Add Groups',
+                operation: '...'
+            },
+            {
+                name: 'Dantejczycy',
+                purpose: 'Study',
+                maxMembers: '10',
+                code: '456123',
+                status: 'Private',
+                description: 'Study group',
                 users: 'Add Users',
                 groups: 'Add Groups',
                 operation: '...'
@@ -202,7 +224,7 @@ function GroupManagement() {
             </table>
             {isModalUserOpen && (
                 <div className="modal">
-                    <div className="modal-content">
+                    <div className="modal-content" style={{borderRadius: '20px'}}>
                         <UserList/>
                         <button style={{width: '300px', alignItems: 'center'}} className="btn btn-purple"
                                 onClick={() => setIsUserModalOpen(false)}>Close
