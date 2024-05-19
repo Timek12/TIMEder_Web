@@ -130,7 +130,7 @@ function EventManagement() {
                 Header: 'Users',
                 accessor: 'users',
                 Cell: ({ value }) => (
-                    <button onClick={() => setIsUserModalOpen(true)}>
+                    <button className='btn btn-rounded' onClick={() => setIsUserModalOpen(true)}>
                         {value}
                     </button>
                 ),
@@ -139,7 +139,7 @@ function EventManagement() {
                 Header: 'Groups',
                 accessor: 'groups',
                 Cell: ({ value }) => (
-                    <button onClick={() => setIsGroupModalOpen(true)}>
+                    <button className='btn btn-rounded' onClick={() => setIsGroupModalOpen(true)}>
                         {value}
                     </button>
                 ),
@@ -149,11 +149,11 @@ function EventManagement() {
                 accessor: 'operation',
                 Cell: ({ row: { index, original } }) => (
                     index === 0 ? (
-                        <button className='add-btn'>
+                        <button className='add-btn rounded-button'>
                             <i className="bi bi-plus-circle"></i>
                         </button>
                     ) : (
-                        <button className='remove-btn' onClick={() => {
+                        <button className='remove-btn rounded-button' onClick={() => {
                             Swal.fire({
                                 title: "Are you sure?",
                                 text: "You won't be able to revert this!",
@@ -229,7 +229,7 @@ function EventManagement() {
                 <div className="modal">
                     <div className="modal-content" id='group-modal' style={{borderRadius: '20px'}}>
                         <GroupList/>
-                        <button style={{width: '300px', alignItems: 'center'}} className="btn btn-purple"
+                        <button style={{width: '300px', alignItems: 'center', borderRadius: '5px'}} className="btn btn-purple"
                                 onClick={() => setIsGroupModalOpen(false)}>Close
                         </button>
                     </div>

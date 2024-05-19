@@ -11,7 +11,7 @@ table {
 
 table td, table th {
     border: 1px solid var(--black-purple); /* Adds a border to each cell */
-    padding: 10px; /* Adds some padding inside each cell */
+    /*padding: 10px; !* Adds some padding inside each cell *!*/
 }
 
 table th {
@@ -30,6 +30,10 @@ table th {
 
 .remove-btn i, .add-btn i {
     font-size: 2.5em; /* Adjust size as needed */
+}
+
+.btn-rounded {
+    border-radius: 10px !important;
 }
 
 .modal {
@@ -61,4 +65,10 @@ table th {
 
 #group-modal {
     width: 40% !important;
+}
+
+.btn-light-purple {
+    background-color: var(--light-purple);
+    color: var(--black-purple);
+    border: 1px solid var(--black-purple);
 }

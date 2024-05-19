@@ -142,7 +142,7 @@ function GroupManagement() {
                 Header: 'Users',
                 accessor: 'users',
                 Cell: ({value}) => (
-                    <button onClick={() => setIsUserModalOpen(true)}>
+                    <button className="btn btn-rounded" onClick={() => setIsUserModalOpen(true)}>
                         {value}
                     </button>
                 ),

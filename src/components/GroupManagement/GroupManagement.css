@@ -54,3 +54,7 @@ table th {
     align-items: center;
     text-align: center;
 }
+
+.btn-rounded {
+    border-radius: 10px !important;
+}
