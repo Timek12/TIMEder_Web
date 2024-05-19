@@ -1,16 +1,46 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css'; // Import the CSS file
-import logo from '../../images/logo.png'; // Import the logo image
+import logo from '../../images/logo.png';
+import ResetPassword from "../ResetPassword/ResetPassword"; // Import the logo image
+import EmailConfirmation from "../EmailConfirmation/EmailConfirmation";
 
-function Login({ onLogin }) {
+function Login({ onLogin, onLogout }) {
     const navigate = useNavigate();
+    const [resetClicked, setResetClicked] = useState(false);
+    const [resetEmail, setResetEmail] = useState(false);
+
+    useEffect(() => {
+        if (onLogin) {
+            onLogin();
+        }
+    }, [onLogin]);
 
     const handleSubmit = (event) => {
         event.preventDefault();
         onLogin();
         navigate("/");
     };
+
+    const handleEmailConfirm = () => {
+        setResetEmail(false);
+        setResetClicked(true);
+    }
+
+
+    const handleResetPassword = () => {
+        setResetEmail(true);
+        onLogout();
+        navigate("/email-confirmation");
+    }
+
+    if(resetEmail) {
+        return <EmailConfirmation onConfirm={handleEmailConfirm} />;
+    }
+
+    if (resetClicked) {
+        return <ResetPassword onReset={() => {}} />;
+    }
 
     return (
         <div className="d-flex flex-column justify-content-center align-items-center login-container">
@@ -36,7 +66,7 @@ function Login({ onLogin }) {
                             <button type="submit" className="btn btn-purple btn-block">Sign in</button>
                         </div>
                         <div className="form-group text-right">
-                            <button type="button" className="btn btn-link btn-sm">Forgot Password?</button>
+                            <button type="button" className="btn btn-link btn-sm" onClick={handleResetPassword}>Forgot Password?</button>
                         </div>
                     </form>
                 </div>

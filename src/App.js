@@ -10,6 +10,8 @@ import ErrorManagement from "./components/ErrorManagement/ErrorManagement";
 import EventManagement from "./components/EventManagement/EventManagement";
 import './App.css';
 import GroupManagement from "./components/GroupManagement/GroupManagement"; // Import the CSS file
+import ResetPassword from "./components/ResetPassword/ResetPassword";
+import EmailConfirmation from "./components/EmailConfirmation/EmailConfirmation";
 
 function MainContent() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -23,13 +25,17 @@ function MainContent() {
         setIsLoggedIn(false);
     };
 
+    const handleReset = () => {
+        console.log("Password reset");
+    }
+
     if (!isLoggedIn) {
         return <Login onLogin={handleLogin} />;
     }
 
     return (
         <div className="App">
-            {location.pathname !== "/login" && <Header onLogout={handleLogout} />}
+            {location.pathname !== "/login" && location.pathname !== "/reset" && location.pathname !== "/email-confirmation" && <Header onLogout={handleLogout} />}
             <div className='content'>
                 <Routes>
                     <Route path="/account-management" element= { <AccountManagement /> } > </Route>
@@ -37,11 +43,13 @@ function MainContent() {
                     <Route path="/event-management" element={ <EventManagement /> }> </Route>
                     <Route path="/notifications" element= { <Notifications/> } > </Route>
                     <Route path="/error-reports" element={ <ErrorManagement />}> </Route>
-                    <Route path="/login" element={ <Login onLogin={handleLogin} />}> </Route>
-                    <Route path="/"  element = { <AccountManagement />}> </Route>
+                    <Route path="/login" element={ <Login onLogin={handleLogin} onLogout={handleLogout} />}> </Route>
+                    <Route path="/reset" element={ <ResetPassword onReset={handleReset} onLogin={handleLogin} onLogout={handleLogout} />}> </Route>
+                    <Route path="/email-confirmation" element={ <EmailConfirmation onConfirm={handleReset} />}> </Route>
+                    <Route path="/" element={isLoggedIn ? <AccountManagement /> : <Login onLogin={handleLogin} />}> </Route>
                 </Routes>
             </div>
-            {location.pathname !== "/login" && <Footer />}
+            {location.pathname !== "/login" && location.pathname !== "/reset" && location.pathname !== "/email-confirmation" && <Footer />}
         </div>
     );
 }
