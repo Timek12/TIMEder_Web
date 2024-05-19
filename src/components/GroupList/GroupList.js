@@ -66,7 +66,7 @@ function GroupList() {
     } = useTable({ columns, data });
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div className="card-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', borderRadius: '30px' }}>
             <h1 style={{marginTop: '10px' }}><i className="bi bi-people-fill"></i> Group List</h1>
             <table id='group-table' {...getTableProps()} style={{ width: '200px !important', marginBottom: '20px'}}>
                 <thead>

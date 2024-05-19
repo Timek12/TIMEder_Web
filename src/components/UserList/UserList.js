@@ -96,9 +96,9 @@ function UserList() {
     } = useTable({ columns, data });
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div className="card-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', borderRadius: '30px' }}>
             <h1 style={{marginTop: '10px' }}><i className="bi bi-person"></i> User List</h1>
-            <table {...getTableProps()} style={{ width: '50%', marginBottom: '20px'}}>
+            <table {...getTableProps()} style={{ width: '50%', marginBottom: '20px', }}>
                 <thead>
                 {headerGroups.map(headerGroup => (
                     <tr {...headerGroup.getHeaderGroupProps()}>
