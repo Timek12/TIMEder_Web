@@ -1,10 +1,56 @@
-import React, {useState} from 'react';
-import { useTable } from 'react-table';
+import React, {useEffect, useState} from 'react';
+import {useTable} from 'react-table';
 import './ErrorManagement.css';
 import Swal from "sweetalert2";
+import axios from "axios";
 
 function ErrorManagement() {
     const [sortDirection, setSortDirection] = useState({});
+    const [data, setData] = useState([{
+        index: 245734,
+        date: '21.04.2024',
+        description: 'Homepage not working',
+    },
+        {
+            index: 225714,
+            date: '12.03.2024',
+            description: 'Add Arabic language',
+        }]);
+
+    const updateErrorReportStatus = (id, status) => {
+        const updateErrorReportDTO = {
+            id: id,
+            status: status
+        };
+
+        axios.put('http://localhost:8080/api/v1/error-reports/', updateErrorReportDTO)
+            .then(response => {
+                console.log('Status updated', response.data);
+            })
+            .catch(error => {
+                console.error('There was an error!', error);
+            });
+    };
+
+    const deleteErrorReport = (id) => {
+        axios.delete(`http://localhost:8080/api/v1/error-reports/${id}`)
+            .then(response => {
+                console.log('Report deleted', response.data);
+            })
+            .catch(error => {
+                console.error('There was an error!', error);
+            });
+    };
+
+    useEffect(() => {
+        axios.get("http://localhost:8080/api/v1/error-reports/")
+            .then(response => {
+                setData(response.data);
+            })
+            .catch(error => {
+                console.error('There was an error!', error);
+            });
+    }, []);
 
     const toggleSort = (columnId) => {
         setSortDirection(prev => ({
@@ -13,59 +59,39 @@ function ErrorManagement() {
         }));
     };
 
-    const data = React.useMemo(
-        () => [
-            {
-                index: 245734,
-                date: '21.04.2024',
-                description: 'Homepage not working',
-            },
-            {
-                index: 225714,
-                date: '12.03.2024',
-                description: 'Add Arabic language',
-            },
-            {
-                index: 215332,
-                date: '13.04.2024',
-                description: 'Add blue mode',
-            },
-            {
-                index: 245239,
-                date: '11.05.2024',
-                description: 'Create new group button not working',
-            },
-        ],
-        []
-    );
-
     const [selectedStatus, setSelectedStatus] = useState(Array(data.length).fill(1)); // in progress - 1
 
     const columns = React.useMemo(
         () => [
             {
-                Header: ({ column }) => (
+                Header: ({column}) => (
                     <div onClick={() => toggleSort(column.id)} className="column-header">
                         Index
-                        {sortDirection[column.id] === 'asc' ? <i className="bi bi-caret-up"></i> : sortDirection[column.id] === 'desc' ? <i className="bi bi-caret-down"></i> : null}
+                        {sortDirection[column.id] === 'asc' ?
+                            <i className="bi bi-caret-up"></i> : sortDirection[column.id] === 'desc' ?
+                                <i className="bi bi-caret-down"></i> : null}
                     </div>
                 ),
                 accessor: 'index',
             },
             {
-                Header: ({ column }) => (
+                Header: ({column}) => (
                     <div onClick={() => toggleSort(column.id)} className="column-header">
                         Date
-                        {sortDirection[column.id] === 'asc' ? <i className="bi bi-caret-up"></i> : sortDirection[column.id] === 'desc' ? <i className="bi bi-caret-down"></i> : null}
+                        {sortDirection[column.id] === 'asc' ?
+                            <i className="bi bi-caret-up"></i> : sortDirection[column.id] === 'desc' ?
+                                <i className="bi bi-caret-down"></i> : null}
                     </div>
                 ),
                 accessor: 'date',
             },
             {
-                Header: ({ column }) => (
+                Header: ({column}) => (
                     <div onClick={() => toggleSort(column.id)} className="column-header">
                         Error Message
-                        {sortDirection[column.id] === 'asc' ? <i className="bi bi-caret-up"></i> : sortDirection[column.id] === 'desc' ? <i className="bi bi-caret-down"></i> : null}
+                        {sortDirection[column.id] === 'asc' ?
+                            <i className="bi bi-caret-up"></i> : sortDirection[column.id] === 'desc' ?
+                                <i className="bi bi-caret-down"></i> : null}
                     </div>
                 ),
                 accessor: 'description',
@@ -73,7 +99,7 @@ function ErrorManagement() {
             {
                 Header: 'Status',
                 accessor: 'status',
-                Cell: ({ row }) => (
+                Cell: ({row}) => (
                     <div className='status-icons'>
                         {['check-circle', 'hourglass-split'].map((icon, index) => (
                             <i
@@ -82,6 +108,7 @@ function ErrorManagement() {
                                     const newSelectedStatus = [...selectedStatus];
                                     newSelectedStatus[row.index] = index;
                                     setSelectedStatus(newSelectedStatus);
+                                    updateErrorReportStatus(row.original.id, index === 0 ? 'SOLVED' : 'PENDING');
                                 }}
                             ></i>
                         ))}
@@ -91,8 +118,7 @@ function ErrorManagement() {
             {
                 Header: 'Operation',
                 accessor: 'operation',
-                Cell: () => (
-
+                Cell: ({row}) => (
                     <button className='remove-btn' onClick={() => {
                         Swal.fire({
                             title: "Are you sure?",
@@ -104,12 +130,12 @@ function ErrorManagement() {
                             confirmButtonText: "Yes, delete it!"
                         }).then((result) => {
                             if (result.isConfirmed) {
+                                deleteErrorReport(row.original.id);
                                 Swal.fire({
                                     title: "Deleted!",
                                     text: "Your file has been deleted.",
                                     icon: "success"
                                 });
-                                // Add your code to delete the row here
                             }
                         });
                     }}>
