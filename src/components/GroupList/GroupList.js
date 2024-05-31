@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { useTable } from 'react-table';
 import './GroupList.css';
 
