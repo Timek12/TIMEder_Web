@@ -1,11 +1,88 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTable } from 'react-table';
 import './GroupManagement.css';
 import UserList from "../UserList/UserList";
 import Swal from "sweetalert2";
+import axios from "axios";
 
 function GroupManagement() {
     const [sortDirection, setSortDirection] = useState({});
+    const defaultRow = {
+        name: '',
+        publicity: '',
+        maxMembers: '',
+        code: '',
+        description: '',
+        users: 'Add Users',
+        groups: 'Add Groups',
+        operation: '',
+    };
+
+    const [name, setName] = useState('');
+    const [isPublic, setIsPublic] = useState('');
+    const [maxMembers, setMaxMembers] = useState('');
+    const [code, setCode] = useState('');
+    const [description, setDescription] = useState('');
+
+    const handleSubmit = () => {
+        if (!(name !== '' && isPublic !== '' && maxMembers !== '' && code !== '' && description !== '')) {
+            Swal.fire(
+                'Error!',
+                'Please fill in all fields.',
+                'error'
+            )
+            return;
+        }
+
+        axios.post('http://localhost:8080/api/v1/groups/', {
+            name: name,
+            description: description,
+            currentSize: 1,
+            totalSize: maxMembers,
+            isPrivate: true,
+            joinCode: code,
+            ownerId: 1,
+        })
+            .then(response => {
+                setName('');
+                setIsPublic('');
+                setMaxMembers('');
+                setCode('');
+                setDescription('');
+                setData(prevData => [defaultRow, ...prevData]);
+                Swal.fire({
+                    title: "Success!",
+                    text: "Group has been added.",
+                    icon: "success"
+                });
+            })
+            .catch(error => {
+                Swal.fire({
+                    title: "Error!",
+                    text: "There was an error! " + error,
+                    icon: "error"
+                });
+            });
+    };
+
+
+    const [data, setData] = useState([defaultRow]);
+
+    useEffect(() => {
+        axios.get('http://localhost:8080/api/v1/groups/')
+            .then(response => {
+                const newData = response.data.map(item => ({
+                    ...item, // spread the original object
+                    users: 'Add Users', // add the new fields
+                    groups: 'Add Groups',
+                    operation: '',
+                }));
+                setData(prevData => [prevData[0], ...newData]); // keep the first row and append the fetched data
+            })
+            .catch(error => {
+                console.error('There was an error!', error);
+            });
+    }, []);
 
     const toggleSort = (columnId) => {
         setSortDirection(prev => ({
@@ -14,58 +91,7 @@ function GroupManagement() {
         }));
     };
 
-    const data = React.useMemo(
-        () => [
-            {
-                name: '',
-                location: '',
-                date: '',
-                startDate: '',
-                description: '',
-                users: 'Add Users',
-                groups: 'Add Groups',
-                operation: '',
-            },
-            {
-                name: 'Wejkusie 2.0',
-                purpose: 'Fun',
-                maxMembers: '100',
-                code: '567123',
-                status: 'Public',
-                description: 'Fun group',
-                users: 'Add Users',
-                groups: 'Add Groups',
-                operation: '...'
-            },
-            {
-                name: 'Biale Kapelusze',
-                purpose: 'Relax',
-                maxMembers: '250',
-                code: '514223',
-                status: 'Public',
-                description: 'Relaxing group',
-                users: 'Add Users',
-                groups: 'Add Groups',
-                operation: '...'
-            },
-            {
-                name: 'Dantejczycy',
-                purpose: 'Study',
-                maxMembers: '10',
-                code: '456123',
-                status: 'Private',
-                description: 'Study group',
-                users: 'Add Users',
-                groups: 'Add Groups',
-                operation: '...'
-            },
-        ],
-        []
-    );
-
-    const [isModalUserOpen, setIsUserModalOpen] = useState(false);
-    const [isModalGroupOpen, setIsGroupModalOpen] = useState(false);
-
+    const [isUserModalOpen, setIsUserModalOpen] = useState(false);
     const columns = React.useMemo(
         () => [
             {
@@ -80,18 +106,18 @@ function GroupManagement() {
                 accessor: 'name',
                 Cell: ({row: {index, original}}) => (
                     index === 0 ? (
-                        <input type="text" placeholder='Enter event name'/>
+                        <input type="text" placeholder='Enter group name' required onChange={e => setName(e.target.value)}/>
                     ) : original.name
                 ),
             },
             {
-                Header: 'Purpose',
-                accessor: 'purpose',
+                Header: 'Public',
+                accessor: 'publicity',
                 Cell: ({row: {index, original}}) => (
                     index === 0 ? (
-                        <input type="text" placeholder='Enter group purpose'/>
+                        <input type="text" placeholder='Enter group publicity' required onChange={e => setIsPublic(e.target.value)}/>
                     ) : (
-                        original.purpose
+                        original.publicity
                     )
                 ),
             },
@@ -107,7 +133,7 @@ function GroupManagement() {
                 accessor: 'maxMembers',
                 Cell: ({row: {index, original}}) => (
                     index === 0 ? (
-                        <input type="number" placeholder='Enter max members'/>
+                        <input type="number" placeholder='Enter max members' required onChange={e => setMaxMembers(e.target.value)}/>
                     ) : original.maxMembers
                 ),
             },
@@ -123,7 +149,7 @@ function GroupManagement() {
                 accessor: 'code',
                 Cell: ({row: {index, original}}) => (
                     index === 0 ? (
-                        <input type="text" placeholder='Enter group status'/>
+                        <input type="text" placeholder='Enter group invitation code' required onChange={e => setCode(e.target.value)}/>
                     ) : original.code
                 ),
             },
@@ -132,7 +158,7 @@ function GroupManagement() {
                 accessor: 'description',
                 Cell: ({row: {index, original}}) => (
                     index === 0 ? (
-                        <input type="text" placeholder='Enter description'/>
+                        <input type="text" placeholder='Enter description' required onChange={e => setDescription(e.target.value)}/>
                     ) : (
                         original.description
                     )
@@ -152,7 +178,7 @@ function GroupManagement() {
                 accessor: 'operation',
                 Cell: ({row: {index, original}}) => (
                     index === 0 ? (
-                        <button className='add-btn'>
+                        <button className='add-btn' onClick={handleSubmit}>
                             <i className="bi bi-plus-circle"></i>
                         </button>
                     ) : (
@@ -183,7 +209,7 @@ function GroupManagement() {
                 ),
             }
         ],
-        [sortDirection, setIsUserModalOpen, setIsGroupModalOpen]
+        [sortDirection, setIsUserModalOpen]
     );
 
     const {
@@ -214,7 +240,7 @@ function GroupManagement() {
                     prepareRow(row);
                     return (
                         <tr {...row.getRowProps()}>
-                        {row.cells.map(cell => (
+                            {row.cells.map(cell => (
                                 <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
                             ))}
                         </tr>
@@ -222,7 +248,7 @@ function GroupManagement() {
                 })}
                 </tbody>
             </table>
-            {isModalUserOpen && (
+            {isUserModalOpen && (
                 <div className="modal">
                     <div className="modal-content" style={{borderRadius: '20px'}}>
                         <UserList/>
