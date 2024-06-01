@@ -5,12 +5,13 @@ import logo from '../../images/logo.png';
 import ResetPassword from "../ResetPassword/ResetPassword";
 import EmailConfirmation from "../EmailConfirmation/EmailConfirmation";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 function Login({onLogin, onLogout}) {
     const navigate = useNavigate();
     const [resetClicked, setResetClicked] = useState(false);
     const [resetEmail, setResetEmail] = useState(false);
-    const [email, setEmail] = useState('');
+    const [index, setIndex] = useState('');
     const [password, setPassword] = useState('');
 
     useEffect(() => {
@@ -22,21 +23,33 @@ function Login({onLogin, onLogout}) {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.post('/auth/authenticate', {email, password});
+            console.log('Logging in:', index, password)
+            const response = await axios.post('/auth/authenticate', {index: index, password: password});
+            console.log(response);
             if (response.status === 200) {
                 localStorage.setItem('token', response.data.token);
+                await Swal.fire(
+                    'Success!',
+                    'You have successfully logged in.',
+                    'success'
+                )
                 onLogin();
                 navigate("/");
             } else {
                 console.error('Login failed:', response.data.message);
             }
         } catch (error) {
+            await Swal.fire(
+                'Error!',
+                'Connection to database failed. Error: ' + error.message,
+                'error'
+            )
             console.error('Error:', error);
         }
     };
 
-    const handleEmailChange = (event) => {
-        setEmail(event.target.value);
+    const handleIndexChange = (event) => {
+        setIndex(event.target.value);
     };
 
     const handlePasswordChange = (event) => {
@@ -78,17 +91,18 @@ function Login({onLogin, onLogout}) {
                     <div className="form-group input-icon">
                         <i className="fas fa-envelope"></i>
                         <input
-                            type="email"
+                            required={true}
                             className="form-control"
-                            id="inputEmail"
-                            placeholder="Email"
-                            value={email}
-                            onChange={handleEmailChange}
+                            id="inputIndex"
+                            placeholder="Index"
+                            value={index}
+                            onChange={handleIndexChange}
                         />
                     </div>
                     <div className="form-group input-icon">
                         <i className="fas fa-lock"></i>
                         <input
+                            required={true}
                             type="password"
                             className="form-control"
                             id="inputPassword"
