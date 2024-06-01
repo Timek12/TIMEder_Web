@@ -23,6 +23,7 @@ function MainContent() {
 
     const handleLogout = () => {
         setIsLoggedIn(false);
+        localStorage.removeItem('token');
     };
 
     const handleReset = () => {
