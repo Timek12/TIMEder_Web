@@ -1,60 +1,78 @@
 import React, { useState, useEffect } from 'react';
 import { useTable } from 'react-table';
 import './GroupManagement.css';
-import UserList from "../UserList/UserList";
 import Swal from "sweetalert2";
-import axios from "axios";
+import AuthService from "../../services/authService";
+import { createGroup, deleteGroup, getGroups } from "../../services/groupService";
+import GroupUserList from "../GroupUserList/GroupUserList";
 
 function GroupManagement() {
     const [sortDirection, setSortDirection] = useState({});
+    const [reload, setReload] = useState(false);
+    const [currentGroupId, setCurrentGroupId] = useState(null);
+    const [formKey, setFormKey] = useState(0);
+
     const defaultRow = {
         name: '',
-        publicity: '',
-        maxMembers: '',
-        code: '',
+        isPrivate: '',
+        totalSize: '',
+        joinCode: '',
         description: '',
         users: 'Add Users',
         groups: 'Add Groups',
         operation: '',
     };
 
-    const [name, setName] = useState('');
-    const [isPublic, setIsPublic] = useState('');
-    const [maxMembers, setMaxMembers] = useState('');
-    const [code, setCode] = useState('');
-    const [description, setDescription] = useState('');
+    const getDefaultValues = () => ({
+        name: '',
+        isPrivate: '',
+        totalSize: '',
+        joinCode: '',
+        description: '',
+    });
 
-    const handleSubmit = () => {
-        if (!(name !== '' && isPublic !== '' && maxMembers !== '' && code !== '' && description !== '')) {
-            Swal.fire(
-                'Error!',
-                'Please fill in all fields.',
-                'error'
-            )
-            return;
+    const [inputValues, setInputValues] = useState(getDefaultValues());
+
+    const handleInputChange = (event, field) => {
+        let value = event.target.value;
+        if (field === 'isPrivate') {
+            value = event.target.value === 'Yes';
         }
+        setInputValues(prevValues => ({
+            ...prevValues,
+            [field]: value,
+        }));
+    };
 
-        axios.post('http://localhost:8080/api/v1/groups/', {
-            name: name,
-            description: description,
-            currentSize: 1,
-            totalSize: maxMembers,
-            isPrivate: true,
-            joinCode: code,
-            ownerId: 1,
-        })
-            .then(response => {
-                setName('');
-                setIsPublic('');
-                setMaxMembers('');
-                setCode('');
-                setDescription('');
-                setData(prevData => [defaultRow, ...prevData]);
+    const handleSubmit = (event) => {
+        event.preventDefault();
+
+        const userId = AuthService.getUserId();
+        createGroup(inputValues, userId)
+            .then((response) => {
+                if(response === undefined) {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "There was an error!",
+                        icon: "error"
+                    });
+                    return;
+                }
                 Swal.fire({
                     title: "Success!",
                     text: "Group has been added.",
                     icon: "success"
                 });
+
+                setInputValues({
+                    name: '',
+                    isPrivate: '',
+                    totalSize: '',
+                    joinCode: '',
+                    description: '',
+                });
+
+                setReload(prevReload => !prevReload);
             })
             .catch(error => {
                 Swal.fire({
@@ -63,26 +81,72 @@ function GroupManagement() {
                     icon: "error"
                 });
             });
+
+        setInputValues(getDefaultValues());
+        setFormKey(prevKey => prevKey + 1);
     };
 
+    const handleDelete = (event, groupId) => {
+        event.stopPropagation();
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#6D2B75FF",
+            cancelButtonColor: "#A060A8FF",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteGroup(groupId)
+                    .then(response => {
+                        Swal.fire({
+                            title: "Success!",
+                            text: "Group has been deleted.",
+                            icon: "success"
+                        });
+
+                        setReload(prevReload => !prevReload);
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            title: "Error!",
+                            text: "There was an error! " + error,
+                            icon: "error"
+                        });
+                    });
+            }
+        });
+    };
 
     const [data, setData] = useState([defaultRow]);
 
     useEffect(() => {
-        axios.get('http://localhost:8080/api/v1/groups/')
+        setInputValues({
+            name: '',
+            isPrivate: '',
+            totalSize: '',
+            joinCode: '',
+            description: '',
+        });
+
+        getGroups()
             .then(response => {
                 const newData = response.data.map(item => ({
                     ...item, // spread the original object
-                    users: 'Add Users', // add the new fields
+                    id: item.id,
+                    users: 'Add Users',
                     groups: 'Add Groups',
                     operation: '',
                 }));
-                setData(prevData => [prevData[0], ...newData]); // keep the first row and append the fetched data
+                setData(prevData => [prevData[0], ...newData]);
+                // keep the first row and append the fetched data
             })
             .catch(error => {
                 console.error('There was an error!', error);
             });
-    }, []);
+    }, [reload]);
 
     const toggleSort = (columnId) => {
         setSortDirection(prev => ({
@@ -95,7 +159,7 @@ function GroupManagement() {
     const columns = React.useMemo(
         () => [
             {
-                Header: ({column}) => (
+                Header: ({ column }) => (
                     <div onClick={() => toggleSort(column.id)} className="column-header">
                         Name
                         {sortDirection[column.id] === 'asc' ?
@@ -104,25 +168,30 @@ function GroupManagement() {
                     </div>
                 ),
                 accessor: 'name',
-                Cell: ({row: {index, original}}) => (
+                Cell: ({ row: { index, original } }) => (
                     index === 0 ? (
-                        <input type="text" placeholder='Enter group name' required onChange={e => setName(e.target.value)}/>
+                        <input type="text" placeholder='Enter group name' className="form-control"
+                               onChange={(event) => handleInputChange(event, 'name')}
+                               defaultValue={inputValues.name} required={true}/>
                     ) : original.name
                 ),
             },
             {
                 Header: 'Public',
-                accessor: 'publicity',
-                Cell: ({row: {index, original}}) => (
+                accessor: 'isPrivate',
+                Cell: ({ row: { index, original } }) => (
                     index === 0 ? (
-                        <input type="text" placeholder='Enter group publicity' required onChange={e => setIsPublic(e.target.value)}/>
-                    ) : (
-                        original.publicity
-                    )
+                        <select className="form-control"
+                                onChange={(event) => handleInputChange(event, 'isPrivate')}
+                                defaultValue={inputValues.isPrivate === 'true' ? 'Yes' : 'No'}>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    ) : original.isPrivate ? 'No' : 'Yes'
                 ),
             },
             {
-                Header: ({column}) => (
+                Header: ({ column }) => (
                     <div onClick={() => toggleSort(column.id)} className="column-header">
                         Max members
                         {sortDirection[column.id] === 'asc' ?
@@ -131,14 +200,16 @@ function GroupManagement() {
                     </div>
                 ),
                 accessor: 'maxMembers',
-                Cell: ({row: {index, original}}) => (
+                Cell: ({ row: { index, original } }) => (
                     index === 0 ? (
-                        <input type="number" placeholder='Enter max members' required onChange={e => setMaxMembers(e.target.value)}/>
-                    ) : original.maxMembers
+                        <input type="number" placeholder='Enter max members' className="form-control"
+                               onChange={(event) => handleInputChange(event, 'totalSize')}
+                               defaultValue={inputValues.totalSize} required={true}/>
+                    ) : original.totalSize
                 ),
             },
             {
-                Header: ({column}) => (
+                Header: ({ column }) => (
                     <div onClick={() => toggleSort(column.id)} className="column-header">
                         Invitation Code
                         {sortDirection[column.id] === 'asc' ?
@@ -147,62 +218,49 @@ function GroupManagement() {
                     </div>
                 ),
                 accessor: 'code',
-                Cell: ({row: {index, original}}) => (
+                Cell: ({ row: { index, original } }) => (
                     index === 0 ? (
-                        <input type="text" placeholder='Enter group invitation code' required onChange={e => setCode(e.target.value)}/>
-                    ) : original.code
+                        <input type="text" placeholder='Enter invitation code' className="form-control"
+                               onChange={(event) => handleInputChange(event, 'joinCode')}
+                               defaultValue={inputValues.joinCode} required={true}/>
+                    ) : original.joinCode
                 ),
             },
             {
                 Header: 'Description',
                 accessor: 'description',
-                Cell: ({row: {index, original}}) => (
+                Cell: ({ row: { index, original } }) => (
                     index === 0 ? (
-                        <input type="text" placeholder='Enter description' required onChange={e => setDescription(e.target.value)}/>
-                    ) : (
-                        original.description
-                    )
+                        <input type="text" placeholder='Enter description' className="form-control"
+                               onChange={(event) => handleInputChange(event, 'description')}
+                               defaultValue={inputValues.description} required={true}/>
+                    ) : original.description
                 ),
             },
             {
                 Header: 'Users',
                 accessor: 'users',
-                Cell: ({value}) => (
-                    <button className="btn btn-rounded" onClick={() => setIsUserModalOpen(true)}>
-                        {value}
-                    </button>
+                Cell: ({ row: { index, original } }) => (
+                    index !== 0 ? (
+                        <button className="btn btn-rounded" onClick={() => {
+                            setIsUserModalOpen(true);
+                            setCurrentGroupId(original.id);
+                        }}>
+                            {original.users}
+                        </button>
+                    ) : null
                 ),
             },
             {
                 Header: 'Operation',
                 accessor: 'operation',
-                Cell: ({row: {index, original}}) => (
+                Cell: ({ row: { index, original } }) => (
                     index === 0 ? (
-                        <button className='add-btn' onClick={handleSubmit}>
+                        <button type="submit" className='add-btn'>
                             <i className="bi bi-plus-circle"></i>
                         </button>
                     ) : (
-
-                        <button className='remove-btn' onClick={() => {
-                            Swal.fire({
-                                title: "Are you sure?",
-                                text: "You won't be able to revert this!",
-                                icon: "warning",
-                                showCancelButton: true,
-                                confirmButtonColor: "#6D2B75FF",
-                                cancelButtonColor: "#A060A8FF",
-                                confirmButtonText: "Yes, delete it!"
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    Swal.fire({
-                                        title: "Deleted!",
-                                        text: "Your file has been deleted.",
-                                        icon: "success"
-                                    });
-                                    // Add your code to delete the row here
-                                }
-                            });
-                        }}>
+                        <button type="button" className='remove-btn' onClick={(event) => handleDelete(event, original.id)}>
                             <i className="bi bi-x-circle"></i>
                         </button>
                     )
@@ -218,40 +276,42 @@ function GroupManagement() {
         headerGroups,
         rows,
         prepareRow,
-    } = useTable({columns, data});
+    } = useTable({ columns, data });
 
     return (
-        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-            <h1 style={{marginTop: '30px'}}><i className='bi bi-people-fill'></i> Group Management</h1>
-            <table {...getTableProps()} style={{width: '50%'}}>
-                <thead>
-                {headerGroups.map(headerGroup => (
-                    <tr {...headerGroup.getHeaderGroupProps()}>
-                        {headerGroup.headers.map(column => (
-                            <th {...column.getHeaderProps()}>
-                                {column.render('Header')}
-                            </th>
-                        ))}
-                    </tr>
-                ))}
-                </thead>
-                <tbody {...getTableBodyProps()}>
-                {rows.map(row => {
-                    prepareRow(row);
-                    return (
-                        <tr {...row.getRowProps()}>
-                            {row.cells.map(cell => (
-                                <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <h1 style={{ marginTop: '30px' }}><i className='bi bi-people-fill'></i> Group Management</h1>
+            <form onSubmit={handleSubmit} key={formKey}>
+                <table {...getTableProps()} style={{width: '50%'}}>
+                    <thead>
+                    {headerGroups.map(headerGroup => (
+                        <tr {...headerGroup.getHeaderGroupProps()}>
+                            {headerGroup.headers.map(column => (
+                                <th {...column.getHeaderProps()}>
+                                    {column.render('Header')}
+                                </th>
                             ))}
                         </tr>
-                    );
-                })}
-                </tbody>
-            </table>
+                    ))}
+                    </thead>
+                    <tbody {...getTableBodyProps()}>
+                    {rows.map(row => {
+                        prepareRow(row);
+                        return (
+                            <tr {...row.getRowProps()}>
+                                {row.cells.map(cell => (
+                                    <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                                ))}
+                            </tr>
+                        );
+                    })}
+                    </tbody>
+                </table>
+            </form>
             {isUserModalOpen && (
                 <div className="modal">
                     <div className="modal-content" style={{borderRadius: '20px'}}>
-                        <UserList/>
+                        <GroupUserList groupId={currentGroupId}/>
                         <button style={{width: '300px', alignItems: 'center'}} className="btn btn-purple"
                                 onClick={() => setIsUserModalOpen(false)}>Close
                         </button>

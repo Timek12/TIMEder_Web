@@ -1,9 +1,12 @@
 table {
+    width: 95% !important;
     margin-top: 50px;
     border-collapse: collapse;
     color: var(--black-purple);
     text-align: center;
 }
+
+
 
 table td, table th {
     border: 1px solid var(--black-purple); /* Adds a border to each cell */
@@ -58,3 +61,4 @@ table th {
 .btn-rounded {
     border-radius: 10px !important;
 }
+
