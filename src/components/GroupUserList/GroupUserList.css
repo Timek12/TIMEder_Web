@@ -1,0 +1,39 @@
+table {
+    border-radius: 20px;
+    border-collapse: collapse;
+    color: var(--black-purple);
+    text-align: center;
+}
+
+table td, table th {
+    border: 1px solid var(--black-purple);
+    padding: 10px;
+    color: var(--black-purple);
+}
+
+table th {
+    background-color: var(--dark-purple);
+    color: white;
+}
+
+.remove-btn, .add-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    align-content: center;
+    align-items: center;
+    margin-left: 9px;
+}
+
+.remove-btn i, .add-btn i {
+    font-size: 2.5em;
+}
+
+.user-list-container {
+    border-radius: 20px;
+}
+
+.card-container {
+    border-radius: 20px !important;
+    overflow: hidden;
+}

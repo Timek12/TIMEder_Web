@@ -50,7 +50,7 @@ function MainContent() {
                     <Route path="/" element={isLoggedIn ? <AccountManagement /> : <Login onLogin={handleLogin} />}> </Route>
                 </Routes>
             </div>
-            {location.pathname !== "/login" && location.pathname !== "/reset" && location.pathname !== "/email-confirmation" && <Footer />}
+            {location.pathname !== "/login" && location.pathname !== "/reset" && location.pathname !== "/email-confirmation" }
         </div>
     );
 }
