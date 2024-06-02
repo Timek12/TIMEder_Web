@@ -16,7 +16,7 @@ function ErrorManagement() {
             .then(response => {
                 Swal.fire(
                     'Status updated',
-                    response.data,
+                    'Status updated successfully',
                     'success'
                 )
                 setReloadKey(prevKey => prevKey + 1);
