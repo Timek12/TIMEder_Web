@@ -2,6 +2,8 @@
 import React, {useState} from 'react';
 import axios from "axios";
 import './Notifications.css';
+import {getNotifications} from "../../services/notificationService";
+import Swal from "sweetalert2";
 
 function Notification() {
     const [message, setMessage] = useState('');
@@ -14,23 +16,21 @@ function Notification() {
             return;
         }
 
-        const notificationDTO = {
-            content: message,
-            dateTime: null
-        }
-
-        axios.post('http://localhost:8080/api/v1/notifications/sendToAll', notificationDTO, {
-            headers: {
-                'Content-Type': 'application/json',
-                // 'Authorization': 'Bearer ' + token
-            }
-        })
+        getNotifications(message, new Date())
             .then(() => {
-                alert('Message sent');
+                Swal.fire(
+                    'Success!',
+                    'Notification sent successfully.',
+                    'success'
+                )
                 setMessage('');
             })
             .catch(error => {
-                alert('An error occurred ' + error.message);
+                Swal.fire(
+                    'Error',
+                    'Error while sending notification: ' + error.message,
+                    'error'
+                )
                 setMessage('');
             });
     }
