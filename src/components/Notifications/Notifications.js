@@ -1,6 +1,4 @@
-// src/components/Notification/Notification.js
 import React, {useState} from 'react';
-import axios from "axios";
 import './Notifications.css';
 import {getNotifications} from "../../services/notificationService";
 import Swal from "sweetalert2";
