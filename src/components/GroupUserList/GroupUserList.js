@@ -80,7 +80,7 @@ function GroupUserList( {groupId}) {
                     'User removed successfully.',
                     'success'
                 )
-                setReloadKey(prevKey => prevKey + 1); // Add this line
+                setReloadKey(prevKey => prevKey + 1);
             })
             .catch(error => {
                 Swal.fire(
