@@ -2,55 +2,72 @@ import React, {useEffect, useState} from 'react';
 import {useTable} from 'react-table';
 import './ErrorManagement.css';
 import Swal from "sweetalert2";
-import axios from "axios";
+import {
+    getErrorReports, deleteErrorReportService, updateErrorReportStatusService
+} from "../../services/errorService";
 
 function ErrorManagement() {
     const [sortDirection, setSortDirection] = useState({});
-    const [data, setData] = useState([{
-        index: 245734,
-        date: '21.04.2024',
-        description: 'Homepage not working',
-    },
-        {
-            index: 225714,
-            date: '12.03.2024',
-            description: 'Add Arabic language',
-        }]);
+    const [data, setData] = useState([]);
+    const [reloadKey, setReloadKey] = useState(0);
 
     const updateErrorReportStatus = (id, status) => {
-        const updateErrorReportDTO = {
-            id: id,
-            status: status
-        };
-
-        axios.put('http://localhost:8080/api/v1/error-reports/', updateErrorReportDTO)
+        updateErrorReportStatusService(id, status)
             .then(response => {
-                console.log('Status updated', response.data);
+                Swal.fire(
+                    'Status updated',
+                    response.data,
+                    'success'
+                )
+                setReloadKey(prevKey => prevKey + 1);
             })
             .catch(error => {
+                Swal.fire(
+                    'Error',
+                    'Error while updating status: ' + error.message,
+                    'error'
+                )
                 console.error('There was an error!', error);
             });
     };
 
     const deleteErrorReport = (id) => {
-        axios.delete(`http://localhost:8080/api/v1/error-reports/${id}`)
-            .then(response => {
-                console.log('Report deleted', response.data);
+        deleteErrorReportService(id)
+            .then(() =>{
+                Swal.fire(
+                    'Deleted',
+                    'Error report deleted successfully!',
+                    'success'
+                )
+                setReloadKey(prevKey => prevKey + 1);
             })
             .catch(error => {
-                console.error('There was an error!', error);
+                Swal.fire(
+                    'Error',
+                    'Error while deleting error report: ' + error.message,
+                    'error'
+                )
             });
     };
 
     useEffect(() => {
-        axios.get("http://localhost:8080/api/v1/error-reports/")
+        getErrorReports()
             .then(response => {
-                setData(response.data);
+                const newData = response.data.map(item => ({
+                    id: item.id,
+                    index: item.index,
+                    date: item.dateTime,
+                    description: item.content,
+                    status: item.status,
+                    operation: '',
+                }));
+
+                setData(newData);
             })
             .catch(error => {
                 console.error('There was an error!', error);
             });
-    }, []);
+    }, [reloadKey]);
 
     const toggleSort = (columnId) => {
         setSortDirection(prev => ({
@@ -101,17 +118,20 @@ function ErrorManagement() {
                 accessor: 'status',
                 Cell: ({row}) => (
                     <div className='status-icons'>
-                        {['check-circle', 'hourglass-split'].map((icon, index) => (
-                            <i
-                                className={`bi bi-${icon} ${selectedStatus[row.index] === index ? 'selected' : ''}`}
-                                onClick={() => {
-                                    const newSelectedStatus = [...selectedStatus];
-                                    newSelectedStatus[row.index] = index;
-                                    setSelectedStatus(newSelectedStatus);
-                                    updateErrorReportStatus(row.original.id, index === 0 ? 'SOLVED' : 'PENDING');
-                                }}
-                            ></i>
-                        ))}
+                        {['check-circle', 'hourglass-split'].map((icon, index) => {
+                            const status = index === 0 ? 'SOLVED' : 'PENDING';
+                            return (
+                                <i
+                                    className={`bi bi-${icon} ${row.original.status === status ? 'selected' : ''}`}
+                                    onClick={() => {
+                                        const newSelectedStatus = [...selectedStatus];
+                                        newSelectedStatus[row.index] = index;
+                                        setSelectedStatus(newSelectedStatus);
+                                        updateErrorReportStatus(row.original.id, status);
+                                    }}
+                                ></i>
+                            );
+                        })}
                     </div>
                 ),
             },
