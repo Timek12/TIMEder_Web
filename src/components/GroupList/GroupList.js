@@ -2,7 +2,7 @@ import React from 'react';
 import { useTable } from 'react-table';
 import './GroupList.css';
 
-function GroupList() {
+function GroupList( {eventId} ) {
     const data = React.useMemo(
         () => [
             {
