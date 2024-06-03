@@ -271,26 +271,7 @@ function EventManagement() {
                             <i className="bi bi-plus-circle"></i>
                         </button>
                     ) : (
-                        <button className='remove-btn rounded-button' onClick={(event) => {
-                            Swal.fire({
-                                title: "Are you sure?",
-                                text: "You won't be able to revert this!",
-                                icon: "warning",
-                                showCancelButton: true,
-                                confirmButtonColor: "#6D2B75FF",
-                                cancelButtonColor: "#A060A8FF",
-                                confirmButtonText: "Yes, delete it!"
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    handleDelete(event, original.id);
-                                    Swal.fire({
-                                        title: "Deleted!",
-                                        text: "This event has been deleted.",
-                                        icon: "success"
-                                    });
-                                }
-                            });
-                        }}>
+                        <button className='remove-btn rounded-button' onClick={(event) => handleDelete(event, original.id)}>
                             <i className="bi bi-x-circle"></i>
                         </button>
                     )
