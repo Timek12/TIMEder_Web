@@ -1,20 +1,19 @@
 import axios from "axios";
 import AuthService from "./authService";
 
-export const getEvents = (content, dateTime) => {
+export const getEvents = () => {
     AuthService.setAxiosAuthHeader();
-    return axios.get('/events');
+    return axios.get('/events/');
 }
 
 export const createEvent = (inputValues, userId) => {
     AuthService.setAxiosAuthHeader();
     return axios.post('/events/', {
         name: inputValues.name,
-        startDateTime: inputValues.startDateTime,
-        isPrivate: !inputValues.isPrivate,
+        location: inputValues.location,
+        date: inputValues.date,
+        startTime: inputValues.startTime,
         description: inputValues.description,
-        localization: inputValues.localization,
-        photoFilePath: inputValues.photoFilePath,
         currentSize: 1,
         ownerId: userId,
     });
