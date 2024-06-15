@@ -23,6 +23,10 @@ const AuthService = {
         } else {
             delete axios.defaults.headers.common['Authorization'];
         }
+    },
+
+    login: function(index, password)  {
+        return axios.post(`/auth/authenticate`, {index: index, password: password});
     }
 };
 
