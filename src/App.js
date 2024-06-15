@@ -1,5 +1,5 @@
 // src/App.js
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Header from './components/Header/Header.js';
 import Login from './components/Login/Login.js';
@@ -14,7 +14,7 @@ import ResetPassword from "./components/ResetPassword/ResetPassword";
 import EmailConfirmation from "./components/EmailConfirmation/EmailConfirmation";
 
 function MainContent() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
     const location = useLocation();
 
     const handleLogin = () => {
@@ -30,13 +30,10 @@ function MainContent() {
         console.log("Password reset");
     }
 
-    if (!isLoggedIn) {
-        return <Login onLogin={handleLogin} />;
-    }
 
     return (
         <div className="App">
-            {location.pathname !== "/login" && location.pathname !== "/reset" && location.pathname !== "/email-confirmation" && <Header onLogout={handleLogout} />}
+            {isLoggedIn && location.pathname !== "/" && location.pathname !== "/login" && location.pathname !== "/reset" && location.pathname !== "/email-confirmation" && <Header onLogout={handleLogout} />}
             <div className='content'>
                 <Routes>
                     <Route path="/account-management" element= { <AccountManagement /> } > </Route>
@@ -47,10 +44,10 @@ function MainContent() {
                     <Route path="/login" element={ <Login onLogin={handleLogin} onLogout={handleLogout} />}> </Route>
                     <Route path="/reset" element={ <ResetPassword onReset={handleReset} onLogin={handleLogin} onLogout={handleLogout} />}> </Route>
                     <Route path="/email-confirmation" element={ <EmailConfirmation onConfirm={handleReset} />}> </Route>
-                    <Route path="/" element={isLoggedIn ? <AccountManagement /> : <Login onLogin={handleLogin} />}> </Route>
+                    <Route path="*" element={<Login onLogin={handleLogin} />}> </Route>
                 </Routes>
             </div>
-            {location.pathname !== "/login" && location.pathname !== "/reset" && location.pathname !== "/email-confirmation" }
+            {isLoggedIn && location.pathname !== "/" && location.pathname !== "/login" && location.pathname !== "/reset" && location.pathname !== "/email-confirmation" && <Footer />}
         </div>
     );
 }

@@ -4,8 +4,8 @@ import './Login.css';
 import logo from '../../images/logo.png';
 import ResetPassword from "../ResetPassword/ResetPassword";
 import EmailConfirmation from "../EmailConfirmation/EmailConfirmation";
-import axios from "axios";
 import Swal from "sweetalert2";
+import authService from "../../services/authService";
 
 function Login({onLogin, onLogout}) {
     const navigate = useNavigate();
@@ -23,9 +23,8 @@ function Login({onLogin, onLogout}) {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            console.log('Logging in:', index, password)
-            const response = await axios.post('/auth/authenticate', {index: index, password: password});
-            console.log(response);
+            const response = authService.login(index, password);
+
             if (response.status === 200) {
                 localStorage.setItem('token', response.data.token);
                 await Swal.fire(
@@ -34,7 +33,7 @@ function Login({onLogin, onLogout}) {
                     'success'
                 )
                 onLogin();
-                navigate("/");
+                navigate("/account-management"); // Navigate to the account page after logging in
             } else {
                 console.error('Login failed:', response.data.message);
             }
