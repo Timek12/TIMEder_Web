@@ -26,7 +26,8 @@ const AuthService = {
     },
 
     login: function(index, password)  {
-        return axios.post(`/auth/authenticate`, {index: index, password: password});
+        AuthService.setAxiosAuthHeader();
+        return  axios.post(`/auth/authenticate`, {index: index, password: password});
     }
 };
 

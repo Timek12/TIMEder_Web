@@ -23,8 +23,7 @@ function Login({onLogin, onLogout}) {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = authService.login(index, password);
-
+            const response = await authService.login(index, password);
             if (response.status === 200) {
                 localStorage.setItem('token', response.data.token);
                 await showSuccessMessage('You have successfully logged in.');
