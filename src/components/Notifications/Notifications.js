@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import './Notifications.css';
 import {getNotifications} from "../../services/notificationService";
-import Swal from "sweetalert2";
+import {showErrorMessage, showInfoMessage, showSuccessMessage} from "../../services/swalService";
 
 function Notification() {
     const [message, setMessage] = useState('');
@@ -10,25 +10,17 @@ function Notification() {
         e.preventDefault();
 
         if (message === '') {
-            alert('Please enter a message');
+            showInfoMessage('Please enter a message').then(r => r.dismiss);
             return;
         }
 
         getNotifications(message, new Date())
             .then(() => {
-                Swal.fire(
-                    'Success!',
-                    'Notification sent successfully.',
-                    'success'
-                )
+                showSuccessMessage('Notification sent successfully.').then(r => r.dismiss);
                 setMessage('');
             })
             .catch(error => {
-                Swal.fire(
-                    'Error',
-                    'Error while sending notification: ' + error.message,
-                    'error'
-                )
+                showErrorMessage('Failed to send notification.').then(r => r.dismiss);
                 setMessage('');
             });
     }

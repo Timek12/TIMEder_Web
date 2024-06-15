@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import AuthService from "../../services/authService";
 import { createGroup, deleteGroup, getGroups } from "../../services/groupService";
 import GroupUserList from "../GroupUserList/GroupUserList";
+import {showErrorMessage, showSuccessMessage} from "../../services/swalService";
 
 function GroupManagement() {
     const [sortDirection, setSortDirection] = useState({});
@@ -51,18 +52,11 @@ function GroupManagement() {
         createGroup(inputValues, userId)
             .then((response) => {
                 if(response === undefined) {
-                    Swal.fire({
-                        title: "Error!",
-                        text: "There was an error!",
-                        icon: "error"
-                    });
+                    showErrorMessage('There was an error!').then(r => r.dismiss);
                     return;
                 }
-                Swal.fire({
-                    title: "Success!",
-                    text: "Group has been added.",
-                    icon: "success"
-                });
+
+                showSuccessMessage('Group added successfully.').then(r => r.dismiss);
 
                 setInputValues({
                     name: '',
@@ -75,11 +69,7 @@ function GroupManagement() {
                 setReload(prevReload => !prevReload);
             })
             .catch(error => {
-                Swal.fire({
-                    title: "Error!",
-                    text: "There was an error! " + error,
-                    icon: "error"
-                });
+                showErrorMessage('There was an error! ' + error).then(r => r.dismiss);
             });
 
         setInputValues(getDefaultValues());
@@ -101,20 +91,12 @@ function GroupManagement() {
             if (result.isConfirmed) {
                 deleteGroup(groupId)
                     .then(response => {
-                        Swal.fire({
-                            title: "Success!",
-                            text: "Group has been deleted.",
-                            icon: "success"
-                        });
+                        showSuccessMessage('Group deleted successfully.').then(r => r.dismiss);
 
                         setReload(prevReload => !prevReload);
                     })
                     .catch(error => {
-                        Swal.fire({
-                            title: "Error!",
-                            text: "There was an error! " + error,
-                            icon: "error"
-                        });
+                        showErrorMessage('There was an error! ' + error).then(r => r.dismiss);
                     });
             }
         });

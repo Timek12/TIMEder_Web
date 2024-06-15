@@ -4,8 +4,8 @@ import './Login.css';
 import logo from '../../images/logo.png';
 import ResetPassword from "../ResetPassword/ResetPassword";
 import EmailConfirmation from "../EmailConfirmation/EmailConfirmation";
-import Swal from "sweetalert2";
 import authService from "../../services/authService";
+import {showErrorMessage, showSuccessMessage} from "../../services/swalService";
 
 function Login({onLogin, onLogout}) {
     const navigate = useNavigate();
@@ -27,22 +27,14 @@ function Login({onLogin, onLogout}) {
 
             if (response.status === 200) {
                 localStorage.setItem('token', response.data.token);
-                await Swal.fire(
-                    'Success!',
-                    'You have successfully logged in.',
-                    'success'
-                )
+                await showSuccessMessage('You have successfully logged in.');
                 onLogin();
                 navigate("/account-management"); // Navigate to the account page after logging in
             } else {
                 console.error('Login failed:', response.data.message);
             }
         } catch (error) {
-            await Swal.fire(
-                'Error!',
-                'Connection to database failed. Error: ' + error.message,
-                'error'
-            )
+            await showErrorMessage('An error occurred while logging in. Please try again.')
             console.error('Error:', error);
         }
     };

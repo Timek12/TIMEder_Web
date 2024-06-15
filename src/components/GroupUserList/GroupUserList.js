@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import { useTable } from 'react-table';
 import './GroupUserList.css';
 import {addMember, deleteMember, getMembers} from "../../services/groupService";
-import Swal from "sweetalert2";
+import {showErrorMessage, showSuccessMessage} from "../../services/swalService";
 function GroupUserList( {groupId}) {
     const [data, setData] = React.useState([]);
     const [reloadKey, setReloadKey] = useState(0);
@@ -55,19 +55,11 @@ function GroupUserList( {groupId}) {
 
         addMember(groupId, inputValues.userIndex, inputValues.firstName, inputValues.lastName)
             .then(() => {
-                Swal.fire(
-                    'Success!',
-                    'User added successfully.',
-                    'success'
-                )
+                showSuccessMessage('User added successfully.').then(r => r.dismiss);
                 setReloadKey(prevKey => prevKey + 1);
             })
             .catch(error => {
-                Swal.fire(
-                    'Error!',
-                    'There was an error while adding the user. Error: ' + error.message,
-                    'error'
-                )
+                showErrorMessage('There was an error while adding the user. Error: ' + error.message).then(r => r.dismiss);
                 console.error('There was an error!', error);
             });
     };
@@ -75,19 +67,11 @@ function GroupUserList( {groupId}) {
     const handleDeleteMember = (userIndex) => {
         deleteMember(groupId, userIndex)
             .then(() => {
-                Swal.fire(
-                    'Success!',
-                    'User removed successfully.',
-                    'success'
-                )
+                showSuccessMessage('User removed successfully.').then(r => r.dismiss);
                 setReloadKey(prevKey => prevKey + 1);
             })
             .catch(error => {
-                Swal.fire(
-                    'Error!',
-                    'There was an error while removing the user. Error: ' + error.message,
-                    'error'
-                )
+                showErrorMessage('There was an error while removing the user. Error: ' + error.message).then(r => r.dismiss);
                 console.error('There was an error!', error);
             });
     };
