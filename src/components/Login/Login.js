@@ -4,8 +4,8 @@ import './Login.css';
 import logo from '../../images/logo.png';
 import ResetPassword from "../ResetPassword/ResetPassword";
 import EmailConfirmation from "../EmailConfirmation/EmailConfirmation";
-import axios from "axios";
-import Swal from "sweetalert2";
+import authService from "../../services/authService";
+import {showErrorMessage, showSuccessMessage} from "../../services/swalService";
 
 function Login({onLogin, onLogout}) {
     const navigate = useNavigate();
@@ -23,27 +23,17 @@ function Login({onLogin, onLogout}) {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            console.log('Logging in:', index, password)
-            const response = await axios.post('/auth/authenticate', {index: index, password: password});
-            console.log(response);
+            const response = await authService.login(index, password);
             if (response.status === 200) {
                 localStorage.setItem('token', response.data.token);
-                await Swal.fire(
-                    'Success!',
-                    'You have successfully logged in.',
-                    'success'
-                )
+                await showSuccessMessage('You have successfully logged in.');
                 onLogin();
-                navigate("/");
+                navigate("/account-management");
             } else {
                 console.error('Login failed:', response.data.message);
             }
         } catch (error) {
-            await Swal.fire(
-                'Error!',
-                'Connection to database failed. Error: ' + error.message,
-                'error'
-            )
+            await showErrorMessage('An error occurred while logging in. Please try again.')
             console.error('Error:', error);
         }
     };

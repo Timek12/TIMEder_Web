@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import {
     getErrorReports, deleteErrorReportService, updateErrorReportStatusService
 } from "../../services/errorService";
+import {showErrorMessage, showSuccessMessage} from "../../services/swalService";
 
 function ErrorManagement() {
     const [sortDirection, setSortDirection] = useState({});
@@ -14,19 +15,11 @@ function ErrorManagement() {
     const updateErrorReportStatus = (id, status) => {
         updateErrorReportStatusService(id, status)
             .then(response => {
-                Swal.fire(
-                    'Status updated',
-                    'Status updated successfully',
-                    'success'
-                )
+                showSuccessMessage('Status updated successfully').then(r => r.dismiss);
                 setReloadKey(prevKey => prevKey + 1);
             })
             .catch(error => {
-                Swal.fire(
-                    'Error',
-                    'Error while updating status: ' + error.message,
-                    'error'
-                )
+                showErrorMessage('Error while updating status').then(r => r.dismiss);
                 console.error('There was an error!', error);
             });
     };
@@ -34,19 +27,11 @@ function ErrorManagement() {
     const deleteErrorReport = (id) => {
         deleteErrorReportService(id)
             .then(() =>{
-                Swal.fire(
-                    'Deleted',
-                    'Error report deleted successfully!',
-                    'success'
-                )
+                showErrorMessage('Error report deleted successfully').then(r => r.dismiss);
                 setReloadKey(prevKey => prevKey + 1);
             })
             .catch(error => {
-                Swal.fire(
-                    'Error',
-                    'Error while deleting error report: ' + error.message,
-                    'error'
-                )
+                showErrorMessage('Error while deleting error report').then(r => r.dismiss);
             });
     };
 
@@ -151,11 +136,7 @@ function ErrorManagement() {
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 deleteErrorReport(row.original.id);
-                                Swal.fire({
-                                    title: "Deleted!",
-                                    text: "Your file has been deleted.",
-                                    icon: "success"
-                                });
+                                showSuccessMessage('Error report deleted successfully').then(r => r.dismiss);
                             }
                         });
                     }}>
