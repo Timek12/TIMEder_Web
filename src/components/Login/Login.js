@@ -28,7 +28,7 @@ function Login({onLogin, onLogout}) {
                 localStorage.setItem('token', response.data.token);
                 await showSuccessMessage('You have successfully logged in.');
                 onLogin();
-                navigate("/account-management"); // Navigate to the account page after logging in
+                navigate("/account-management");
             } else {
                 console.error('Login failed:', response.data.message);
             }
