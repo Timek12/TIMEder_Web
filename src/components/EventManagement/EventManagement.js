@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {useTable} from 'react-table';
 import './EventManagement.css';
-import UserList from "../UserList/UserList";
-import GroupList from "../GroupList/GroupList";
 import Swal from "sweetalert2";
 import AuthService from "../../services/authService";
 import {deleteEvent, getEvents, createEvent} from "../../services/eventService";
+import EventUserList from "../EventUserList/EventUserList";
+import EventGroupList from "../EventGroupList/EventGroupList";
 
 function EventManagement() {
     const [sortDirection, setSortDirection] = useState({});
@@ -15,7 +15,7 @@ function EventManagement() {
 
     const defaultRow = {
         name: '',
-        location: '',
+        localization: '',
         date: '',
         startTime: '',
         description: '',
@@ -26,7 +26,7 @@ function EventManagement() {
 
     const getDefaultValues = () => ({
         name: '',
-        location: '',
+        localization: '',
         date: '',
         startTime: '',
         description: '',
@@ -58,13 +58,13 @@ function EventManagement() {
                 }
                 Swal.fire({
                     title: "Success!",
-                    text: "Group has been added.",
+                    text: "Event has been added.",
                     icon: "success"
                 });
 
                 setInputValues({
                     name: '',
-                    location: '',
+                    localization: '',
                     date: '',
                     startTime: '',
                     description: '',
@@ -101,7 +101,7 @@ function EventManagement() {
                     .then(response => {
                         Swal.fire({
                             title: "Success!",
-                            text: "Group has been deleted.",
+                            text: "Event has been deleted.",
                             icon: "success"
                         });
 
@@ -123,7 +123,7 @@ function EventManagement() {
     useEffect(() => {
         setInputValues({
             name: '',
-            location: '',
+            localization: '',
             date: '',
             startTime: '',
             description: '',
@@ -132,7 +132,11 @@ function EventManagement() {
         getEvents()
             .then(response => {
                 const newData = response.data.map(item => ({
-                    ...item, // spread the original object
+                    name: item.name,
+                    localization: item.localization,
+                    date: item.startDateTime.split('T')[0],
+                    startTime: item.startDateTime.split('T')[1].substring(0, item.startDateTime.split('T')[1].length - 3),
+                    description: item.description,
                     id: item.id,
                     users: 'Add Users',
                     groups: 'Add Groups',
@@ -177,14 +181,14 @@ function EventManagement() {
                 ),
             },
             {
-                Header: 'Location',
-                accessor: 'location',
+                Header: 'localization',
+                accessor: 'localization',
                 Cell: ({row: {index, original}}) => (
                     index === 0 ? (
-                        <input type="text" placeholder='Enter event location' className="form-control"
-                               onChange={(event) => handleInputChange(event, 'location')}
-                               defaultValue={inputValues.location} required={true}/>
-                    ) : original.location
+                        <input type="text" placeholder='Enter event localization' className="form-control"
+                               onChange={(event) => handleInputChange(event, 'localization')}
+                               defaultValue={inputValues.localization} required={true}/>
+                    ) : original.localization
                 ),
             },
             {
@@ -254,7 +258,7 @@ function EventManagement() {
                 Cell: ({ row: { index, original } }) => (
                     index !== 0 ? (
                         <button className="btn btn-rounded" onClick={() => {
-                            setIsUserModalOpen(true);
+                            setIsGroupModalOpen(true);
                             setCurrentEventId(original.id);
                         }}>
                             {original.groups}
@@ -321,8 +325,8 @@ function EventManagement() {
             </form>
             {isModalUserOpen && (
                 <div className="modal">
-                    <div className="modal-content" style={{borderRadius: '20px'}}>
-                        <UserList eventId = {currentEventId}/>
+                    <div className="modal-content" id='user-modal' style={{borderRadius: '20px'}}>
+                        <EventUserList eventId = {currentEventId}/>
                         <button style={{width: '300px', alignItems: 'center'}} className="btn btn-purple"
                                 onClick={() => setIsUserModalOpen(false)}>Close
                         </button>
@@ -332,7 +336,7 @@ function EventManagement() {
             {isModalGroupOpen && (
                 <div className="modal">
                     <div className="modal-content" id='group-modal' style={{borderRadius: '20px'}}>
-                        <GroupList eventId = {currentEventId}/>
+                        <EventGroupList eventId = {currentEventId}/>
                         <button style={{width: '300px', alignItems: 'center', borderRadius: '5px'}}
                                 className="btn btn-purple"
                                 onClick={() => setIsGroupModalOpen(false)}>Close
