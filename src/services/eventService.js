@@ -10,11 +10,11 @@ export const createEvent = (inputValues, userId) => {
     AuthService.setAxiosAuthHeader();
     return axios.post('/events/', {
         name: inputValues.name,
-        location: inputValues.location,
-        date: inputValues.date,
-        startTime: inputValues.startTime,
+        startDateTime: inputValues.date + 'T' + inputValues.startTime,
+        isPrivate: false,
         description: inputValues.description,
-        currentSize: 1,
+        localization: inputValues.localization,
+        photoFilePath: '',
         ownerId: userId,
     });
 }
@@ -49,7 +49,7 @@ export const addGroup = (eventId, groupName) => {
     return axios.post(`/events/groups`, {eventId: eventId, groupName: groupName});
 }
 
-export const deleteGroup = (eventId, groupId) => {
+export const deleteGroup = (eventId, groupName) => {
     AuthService.setAxiosAuthHeader();
-    return axios.delete(`/events/groups`, { data: {eventId: eventId, groupId: groupId}});
+    return axios.delete(`/events/groups`, { data: {eventId: eventId, groupName: groupName}});
 }
