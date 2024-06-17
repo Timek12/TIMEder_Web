@@ -65,7 +65,7 @@ function EventGroupList({eventId: eventId}) {
             .catch(error => {
                 Swal.fire(
                     'Error!',
-                    'There was an error while adding the group. Error: ' + error.message,
+                    'There was an error while adding the group.',
                     'error'
                 )
                 console.error('There was an error!', error);
@@ -85,7 +85,7 @@ function EventGroupList({eventId: eventId}) {
             .catch(error => {
                 Swal.fire(
                     'Error!',
-                    'There was an error while removing the group. Error: ' + error.message,
+                    'There was an error while removing the group.',
                     'error'
                 )
                 console.error('There was an error!', error);

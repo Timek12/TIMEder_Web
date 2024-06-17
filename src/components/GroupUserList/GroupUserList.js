@@ -59,7 +59,7 @@ function GroupUserList( {groupId}) {
                 setReloadKey(prevKey => prevKey + 1);
             })
             .catch(error => {
-                showErrorMessage('There was an error while adding the user. Error: ' + error.message).then(r => r.dismiss);
+                showErrorMessage('There was an error while adding the user.').then(r => r.dismiss);
                 console.error('There was an error!', error);
             });
     };
@@ -71,7 +71,7 @@ function GroupUserList( {groupId}) {
                 setReloadKey(prevKey => prevKey + 1);
             })
             .catch(error => {
-                showErrorMessage('There was an error while removing the user. Error: ' + error.message).then(r => r.dismiss);
+                showErrorMessage('There was an error while removing the user.').then(r => r.dismiss);
                 console.error('There was an error!', error);
             });
     };
