@@ -69,7 +69,7 @@ function GroupManagement() {
                 setReload(prevReload => !prevReload);
             })
             .catch(error => {
-                showErrorMessage('There was an error! ' + error).then(r => r.dismiss);
+                showErrorMessage('There was an error!').then(r => r.dismiss);
             });
 
         setInputValues(getDefaultValues());
@@ -96,7 +96,7 @@ function GroupManagement() {
                         setReload(prevReload => !prevReload);
                     })
                     .catch(error => {
-                        showErrorMessage('There was an error! ' + error).then(r => r.dismiss);
+                        showErrorMessage('There was an error!').then(r => r.dismiss);
                     });
             }
         });

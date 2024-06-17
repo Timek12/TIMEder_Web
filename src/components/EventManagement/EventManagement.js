@@ -75,7 +75,7 @@ function EventManagement() {
             .catch(error => {
                 Swal.fire({
                     title: "Error!",
-                    text: "There was an error! " + error,
+                    text: "There was an error!",
                     icon: "error"
                 });
             });
@@ -110,7 +110,7 @@ function EventManagement() {
                     .catch(error => {
                         Swal.fire({
                             title: "Error!",
-                            text: "There was an error! " + error,
+                            text: "There was an error!",
                             icon: "error"
                         });
                     });
