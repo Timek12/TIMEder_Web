@@ -1,11 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import { useTable } from 'react-table';
 import './AccountManagement.css';
-import {getUsers, updateUser} from "../../services/userService";
 
 function AccountManagement() {
     const [sortDirection, setSortDirection] = useState({});
-    const [reload, setReload] = useState(false);
 
     const toggleSort = (columnId) => {
         setSortDirection(prev => ({
@@ -14,37 +12,48 @@ function AccountManagement() {
         }));
     };
 
-
-    const [data, setData] = useState([]);
-    const [selectedStatus, setSelectedStatus] = useState([]);
-
-    useEffect(() => {
-        getUsers()
-            .then(response => {
-                const newData = response.data.map(item => ({
-                    id: item.id,
-                    firstName: item.firstName,
-                    lastName: item.lastName,
-                    index: item.index,
-                    email: item.email,
-                    password: item.password,
-                    status: item.status,
-                }));
-                setData(prevData => {
-                    if (!prevData || prevData.length === 0) {
-                        return newData;
-                    }
-                    return [prevData[0], ...newData];
-                });
-
-                // Set selectedStatus based on the fetched data's status
-            })
-            .catch(error => {
-                console.error('There was an error!', error);
-            });
-        setSelectedStatus(data.map(item => item.status));
-    }, [reload]);
-
+    const data = React.useMemo(
+        () => [
+            {
+                index: 245734,
+                firstName: 'Adam',
+                lastName: 'Kowalski',
+                status: '',
+            },
+            {
+                index: 225714,
+                firstName: 'Agnieszka',
+                lastName: 'Grzelak',
+                status: '',
+            },
+            {
+                index: 215332,
+                firstName: 'Marcin',
+                lastName: 'Dubiel',
+                status: '',
+            },
+            {
+                index: 245239,
+                firstName: 'Robert',
+                lastName: 'Lewandowski',
+                status: '',
+            },
+            {
+                index: 234156,
+                firstName: 'Aleksandra',
+                lastName: 'Kowalska',
+                status: '',
+            },
+            {
+                index: 245239,
+                firstName: 'Jakub',
+                lastName: 'Kowalski',
+                status: '',
+            },
+        ],
+        []
+    );
+    const [selectedStatus, setSelectedStatus] = useState(Array(data.length).fill(2)); // ok - 2
     const columns = React.useMemo(
         () => [
             {
@@ -89,15 +98,9 @@ function AccountManagement() {
                             <i
                                 className={`bi bi-${icon} ${selectedStatus[row.index] === index ? 'selected' : ''}`}
                                 onClick={() => {
-                                    if (data.length !== 0) {
-                                        updateUser(data[row.index].id, data[row.index], index);
-                                        const newSelectedStatus = [...selectedStatus];
-                                        newSelectedStatus[row.index] = index;
-                                        setSelectedStatus(newSelectedStatus);
-                                        setReload(prevReload => !prevReload);
-                                    } else {
-                                        setReload(prevReload => !prevReload);
-                                    }
+                                    const newSelectedStatus = [...selectedStatus];
+                                    newSelectedStatus[row.index] = index;
+                                    setSelectedStatus(newSelectedStatus);
                                 }}
                             ></i>
                         ))}
