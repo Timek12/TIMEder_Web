@@ -3,6 +3,7 @@ import {useTable} from 'react-table';
 import './EventGroupList.css';
 import {addGroup, deleteGroup, getGroups} from "../../services/eventService";
 import Swal from "sweetalert2";
+import {showErrorMessage, showLoadingSpinner, showSuccessMessage} from "../../services/swalService";
 function EventGroupList({eventId: eventId}) {
     const [data, setData] = React.useState([]);
     const [reloadKey, setReloadKey] = useState(0);
@@ -24,8 +25,11 @@ function EventGroupList({eventId: eventId}) {
     };
 
     useEffect(() => {
+        showLoadingSpinner().then(r => r.dismiss);
+
         getGroups(eventId)
             .then(response => {
+                Swal.close();
                 const newData = response.data.map(item => ({
                     ...item,
 
@@ -44,7 +48,8 @@ function EventGroupList({eventId: eventId}) {
 
             })
             .catch(error => {
-                console.error('There was an error!', error);
+                Swal.close();
+                showErrorMessage('There was an error!');
             });
     }, [eventId, reloadKey]);
 
@@ -55,19 +60,11 @@ function EventGroupList({eventId: eventId}) {
 
         addGroup(eventId, inputValues.name)
             .then(() => {
-                Swal.fire(
-                    'Success!',
-                    'Group added successfully.',
-                    'success'
-                )
+                showSuccessMessage('Group added successfully!').then(r => r.dismiss);
                 setReloadKey(prevKey => prevKey + 1);
             })
             .catch(error => {
-                Swal.fire(
-                    'Error!',
-                    'There was an error while adding the group. Error: ' + error.message,
-                    'error'
-                )
+                showErrorMessage('There was an error while adding the group.').then(r => r.dismiss);
                 console.error('There was an error!', error);
             });
     };
@@ -75,19 +72,11 @@ function EventGroupList({eventId: eventId}) {
     const handleDeleteGroup = (groupName) => {
         deleteGroup(eventId, groupName)
             .then(() => {
-                Swal.fire(
-                    'Success!',
-                    'Group removed successfully.',
-                    'success'
-                )
+                showSuccessMessage('Group removed successfully!').then(r => r.dismiss);
                 setReloadKey(prevKey => prevKey + 1);
             })
             .catch(error => {
-                Swal.fire(
-                    'Error!',
-                    'There was an error while removing the group. Error: ' + error.message,
-                    'error'
-                )
+                showErrorMessage('There was an error while removing the group.').then(r => r.dismiss);
                 console.error('There was an error!', error);
             });
     };

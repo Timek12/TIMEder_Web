@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 import AuthService from "../../services/authService";
 import { createGroup, deleteGroup, getGroups } from "../../services/groupService";
 import GroupUserList from "../GroupUserList/GroupUserList";
-import {showErrorMessage, showSuccessMessage} from "../../services/swalService";
+import {showErrorMessage, showLoadingSpinner, showSuccessMessage} from "../../services/swalService";
 
 function GroupManagement() {
     const [sortDirection, setSortDirection] = useState({});
@@ -105,6 +105,8 @@ function GroupManagement() {
     const [data, setData] = useState([defaultRow]);
 
     useEffect(() => {
+        showLoadingSpinner().then(r => r.dismiss);
+
         setInputValues({
             name: '',
             isPrivate: '',
@@ -115,6 +117,7 @@ function GroupManagement() {
 
         getGroups()
             .then(response => {
+                Swal.close();
                 const newData = response.data.map(item => ({
                     ...item, // spread the original object
                     id: item.id,
@@ -126,7 +129,8 @@ function GroupManagement() {
                 // keep the first row and append the fetched data
             })
             .catch(error => {
-                console.error('There was an error!', error);
+                Swal.close();
+                showErrorMessage('There was an error!');
             });
     }, [reload]);
 
