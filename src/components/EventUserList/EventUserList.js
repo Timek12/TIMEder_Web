@@ -3,6 +3,7 @@ import {useTable} from 'react-table';
 import './EventUserList.css';
 import {addMember, deleteMember, getMembers} from "../../services/eventService";
 import Swal from "sweetalert2";
+import {showErrorMessage, showLoadingSpinner} from "../../services/swalService";
 
 function EventUserList({eventId: eventId}) {
     const [data, setData] = React.useState([]);
@@ -25,8 +26,11 @@ function EventUserList({eventId: eventId}) {
     };
 
     useEffect(() => {
+        showLoadingSpinner().then(r => r.dismiss);
+
         getMembers(eventId)
             .then(response => {
+                Swal.close();
                 const newData = response.data.map(item => ({
                     ...item,
                     userIndex: item.index,
@@ -45,7 +49,8 @@ function EventUserList({eventId: eventId}) {
 
             })
             .catch(error => {
-                console.error('There was an error!', error);
+                Swal.close();
+                showErrorMessage('There was an error!');
             });
     }, [eventId, reloadKey]);
 
