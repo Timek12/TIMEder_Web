@@ -65,7 +65,6 @@ function EventGroupList({eventId: eventId}) {
             })
             .catch(error => {
                 showErrorMessage('There was an error while adding the group.').then(r => r.dismiss);
-                console.error('There was an error!', error);
             });
     };
 
@@ -77,7 +76,6 @@ function EventGroupList({eventId: eventId}) {
             })
             .catch(error => {
                 showErrorMessage('There was an error while removing the group.').then(r => r.dismiss);
-                console.error('There was an error!', error);
             });
     };
 

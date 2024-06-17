@@ -71,7 +71,7 @@ function EventUserList({eventId: eventId}) {
             .catch(error => {
                 Swal.fire(
                     'Error!',
-                    'There was an error while adding the user. Error: ' + error.message,
+                    'There was an error while adding the user.',
                     'error'
                 )
                 console.error('There was an error!', error);
@@ -91,7 +91,7 @@ function EventUserList({eventId: eventId}) {
             .catch(error => {
                 Swal.fire(
                     'Error!',
-                    'There was an error while removing the user. Error: ' + error.message,
+                    'There was an error while removing the user.',
                     'error'
                 )
                 console.error('There was an error!', error);
